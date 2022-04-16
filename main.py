@@ -23,17 +23,17 @@ class MainWidget(RelativeLayout):
     perspective_point_x = NumericProperty(0)
     perspective_point_y = NumericProperty(0)
     #vertical
-    V_NB_LINES = 15
+    V_NB_LINES = 23
     V_LINES_SPACING = .4 #percent in the screen witdths value
     vertical_lines = []
     #horizontal
     H_NB_LINES = 15
     H_LINES_SPACING = .1 #percent in the screen witdths height
     horizontal_lines = []
-    #y
+    #tiles moving from y plane
     current_offset_y = 0
     current_y_loop = 0
-    SPEED = .8
+    SPEED = .9
     #moving in x plane
     SPEED_X = 3.0
     current_offset_x = 0
@@ -42,7 +42,7 @@ class MainWidget(RelativeLayout):
     NB_TILES = 16
     tiles = []
     tiles_coordinates = []
-    #player
+    #player structure
     SHIP_WIDTH = .05
     SHIP_HEIGHT = 0.028
     SHIP_BASE_Y = 0.04
@@ -64,8 +64,6 @@ class MainWidget(RelativeLayout):
     sound_music = None
     sound_restart = None
 
-
-
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         #print('INIT W:'+str(self.width) + " H:" + str(self.height))
@@ -74,7 +72,6 @@ class MainWidget(RelativeLayout):
         self.init_horizontal_lines()
         self.init_tiles()
         self.init_ship()
-
         self.reset_game()
 
         if self.is_desktop():
@@ -93,7 +90,7 @@ class MainWidget(RelativeLayout):
         self.sound_music = SoundLoader.load("audio/music2.mp3")
         self.sound_restart = SoundLoader.load("audio/restart.wav")
 
-        self.sound_music.volume = .45
+        self.sound_music.volume = .5
         self.sound_start.volume = .25
         self.sound_galaxy.volume = .25
         self.sound_gameover_impact.volume = .6
@@ -240,7 +237,8 @@ class MainWidget(RelativeLayout):
         return x, y
 
     def update_tiles(self):
-
+        #              [(0,1), (1.1)]
+        #coordinate -> [(0,0), (1,0)]
         for i in range(0, self.NB_TILES):
             tile = self.tiles[i]
             tile_coordinates = self.tiles_coordinates[i]
@@ -266,7 +264,6 @@ class MainWidget(RelativeLayout):
             x1, y1 = self.transform(line_x, 0)
             x2, y2 = self.transform(line_x, self.height)
             self.vertical_lines[i].points = [x1, y1, x2, y2]
-            # offset+=1
 
     #horizontal
     def init_horizontal_lines(self):
@@ -318,7 +315,7 @@ class MainWidget(RelativeLayout):
             self.menu_widget.opacity = 1
             self.sound_music.stop()
             self.sound_gameover_impact.play()
-            Clock.schedule_once(self.play_game_over, 1)
+            Clock.schedule_once(self.play_game_over, .2)
             print('Game Over')
 
     def play_game_over(self, dt):
